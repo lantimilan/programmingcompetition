@@ -9,16 +9,19 @@ ostream& operator<<(ostream& os, const pair<int, int>& data) {
 }
 
 template<typename Data, typename Op>
+class SegmentTree;
+
+template<typename Data, typename Op>
 class TreeNode {
  public:
   Data query(int start, int end) const;
 
- public:
+ private:
   int l, r;
   Data data;
   TreeNode* left;
   TreeNode* right;
-  // friend class SegmentTree;
+  friend class SegmentTree<Data, Op>;
 };
 
 template<typename Data, typename Op>
