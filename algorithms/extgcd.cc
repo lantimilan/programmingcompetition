@@ -56,8 +56,21 @@ int extgcd(int a, int b, int& x, int& y) {
 // t = t % m
 // if t < 0 then t += m
 // ?? can we do better, do we know that -m < t < 0?
+// yes, assume we ensure inv(a, m) always return res such that 0 < res < m
+// then we have 0 < x1 < r
+// then -r < (1 - m * x1) / r < 0
+// so we return m + (1 - m * x1) / r and we know 0 < res < m
+// we can still do better, because c++ integer division truncates towards zero
+// so (1 - m * x1) / r = - m * x1 / r
+// and we return m - m * x1 / r
+// of course we need base case when a == 1, then just return 1
+// also watch for integer overflow.
 int inv(int a, int m) {
-
+    // cout << "inv: " << a << " " << m << endl;
+    a %= m;
+    assert(a);  // check a != 0
+    if (a == 1) return 1;
+    return m - inv(m, a) * (long long)m / a;
 }
 
 int main() {
@@ -75,6 +88,22 @@ int main() {
         cout << a << " * " << x << " + " << b << " * " << y << " = " << g
              << endl;
         assert(a * x  + b * y == g);
+    }
+
+    int coprimes[][2] = {
+        {2, 3},
+        {5, 7},
+        {4, 9},
+        {5, 13},
+        {7, 9},
+        {15, 61},
+    };
+    int n = sizeof coprimes / sizeof coprimes[0];
+    for (int i = 0; i < n; ++i) {
+        int a = coprimes[i][0], m = coprimes[i][1];
+        int v = inv(a, m);
+        assert(v * a % m == 1);
+        cout << a << " * " << v << " = 1 (mod " << m << ")" << endl;
     }
     /*
     int a, b;
