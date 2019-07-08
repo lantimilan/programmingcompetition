@@ -3,7 +3,7 @@
 #include <map>
 using namespace std;
 
-int a[100000+5];
+int a[300000+5];
 map<int, int> cnts;
 
 int main() {
@@ -13,6 +13,8 @@ int main() {
     }
     for (int i = 0; i < n; ++i) {
         int v = a[i];
+        // hash by a^4 - a*k because a[i] != a[j], the original condition
+        // can be transformed by multiply both sides by (a[i] - a[j])
         int key = 1LL * v * v % p * v % p * v % p - 1LL * v * k % p;
         if (key < 0) key += p;
         cnts[key]++;
