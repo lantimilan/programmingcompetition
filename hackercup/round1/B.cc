@@ -21,10 +21,12 @@ void input() {
     Q[i] = (1LL * A * Q[i-2] % D + 1LL * B * Q[i-1] % D + C) % D + 1;
   }
 
+  /*
   cout << "drivers: ";
   for (int i = 0; i < N; ++i) cout << P[i] << " "; cout << endl;
   cout << "logs: ";
   for (int i = 0; i < M; ++i) cout << Q[i] << " "; cout << endl;
+  */
 }
 
 bool check(long long m) {
@@ -32,7 +34,6 @@ bool check(long long m) {
   for (int i = 0; i < N; ++i) {
     if (start >= M) return true;
     long long budget = m;
-    long long scanleft = 0;
     int pos = P[i];
     // let [start..newstart-1] be set of logs assigned to driver[i]
     // p1 = Q[start], p2 = Q[newstart-1]
@@ -42,21 +43,17 @@ bool check(long long m) {
     // 3. p2 <= pos, then cost = p2 - p1 + abs(pos - p2)
     // This formula works for all three cases:
     // cost = p2 - p1 + min(abs(pos-p1), abs(pos-p2))
-    if (pos > Q[start]) {  // scan left
-      scanleft = pos - Q[start];
-      if (scanleft > budget) return false;
-      // back to pos
-      pos = P[i];
-      budget -= 2 * scanleft;
-      while (start < M && Q[start] < pos) ++start;
+    int newstart = start;
+    while (newstart < M) {
+      int p1 = Q[start];
+      int p2 = Q[newstart];
+      long long d1 = abs(pos - p1);
+      long long d2 = abs(pos - p2);
+      long long cost = p2 - p1 + std::min(d1, d2);
+      if (cost > budget) break;
+      else newstart++;
     }
-    // scan right
-    while (start < M) {
-      int d = Q[start] - pos;
-      if (d > budget) break;
-      budget -= d;
-      pos = Q[start++];
-    }
+    start = newstart;
   }
   return start >= M;
 }
